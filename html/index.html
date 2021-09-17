@@ -3,13 +3,41 @@
 <head>
   <meta charset="UTF-8">
   <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport"
+    content="width=device-width,initial-scale=1.0,minimum-scale=1.0,maximum-scale=1.0,user-scalable=no">
   <title>Document</title>
+  <style>
+    body {
+      -webkit-text-size-adjust: 100%;
+    }
+    input,
+    button {
+      font-size: 1rem;
+    }
+
+    button {
+      /* border-radius: 5%; */
+      /* -webkit-appearance: none; */
+    }
+  </style>
 </head>
 <body>
-  <input type="date" name="startDate" value="2021-09-16">
-  <input type="time" name="startTime">
-  <input type="date" name="startTime" value="2021-09-17">
+  <div>
+    <input type="date" name="startDate" value="2021-09-16" id="startDate">
+    <input type="number" name="moveTime" value="30" style="width: 50px; text-align: center">
+  </div>
+  <div class="court-time-wrap">
+    <div class="court-time-list">
+      <input type="text" name="courtNumber" size="2">
+      <input type="time" name="startTime" value="19:00"> ~ 
+      <input type="time"
+        name="endTime" value="23:00">
+    </div>
+  </div>
+  <div>
+    <button type="button" id="btnTime">ADD</button>
+    <button type="button" id="btnCourt">Create Court</button>
+  </div>
   <script src="index.js"></script>
 </body>
 </html>

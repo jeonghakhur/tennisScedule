@@ -1,4 +1,3 @@
-console.clear()
 
 const members = [
   {name: '성재', time: [], count: []},
@@ -39,13 +38,12 @@ startTime.push(new Date(2021, 8, 16, 19, 0))
 endTime.push(new Date(2021, 8, 16, 23, 0))
 const moveTime = 30 * 60 * 1000
 
-const games = (() => {
+const games = () => {
   const tempArray = []
   const firstTime = Math.min(...startTime)
   let gameNumbers = []
 
   for (let i = 0; i < startTime.length; i += 1) {
-    console.log(startTime[i])
     gameNumbers.push((endTime[i] - startTime[i]) / moveTime)
   } 
 
@@ -80,13 +78,12 @@ const games = (() => {
   })
 
   return tempArray
-})()
+}
 
 // 임시 시간 
 members.forEach(member => {
   member.time.push(setTime([2021, 8, 16, 19, 0]), setTime([2021, 8, 16, 23, 0]))
 })
-console.log(members)
 
 const setGame = (type = 'D') => {
   let tempMembers = []
@@ -115,7 +112,6 @@ const setGame = (type = 'D') => {
       return 0
     })
 
-    console.log(tempMembers)
 
     if (tempMembers.length < 4) return
     
@@ -127,5 +123,49 @@ const setGame = (type = 'D') => {
   })
 }
 
-setGame()
-console.log(games, members)
+function setNumberLength(number) {
+  return number < 10 ? '0' + number : number
+}
+
+onDOMContentLoaded(() => {
+  console.clear()
+  const startDate = document.querySelector('#startDate');
+  const nowDate = new Date();
+  const startDateValue = `${nowDate.getFullYear()}-${setNumberLength(nowDate.getMonth() + 1)}-${setNumberLength(nowDate.getDate())}`;
+  startDate.value = startDateValue
+
+  const btnTime = document.querySelector('#btnTime')
+  const courTimeList = document.querySelector('.court-time-list')
+  const btnCourt = document.querySelector('#btnCourt')
+
+  let cloneLen = 0
+  const cloneTimeEl = e => {
+    const cloneEl = courTimeList.cloneNode(true)
+    const parentNode = courTimeList.parentNode
+    const btnDelete = document.createElement('button')
+    btnDelete.textContent = 'Delete'
+    btnDelete.type = 'button'
+
+    btnDelete.addEventListener('click', handleRemoveCourt)
+    cloneEl.append(btnDelete)
+    cloneLen += 1
+    cloneEl.classList.add(`clone-${cloneLen}`) 
+    parentNode.append(cloneEl)
+  }
+
+  const handleRemoveCourt = e => {
+    e.target.parentNode.remove()
+    console.log('remove court')
+  }
+
+  const createScedule = () => {
+    
+    console.log('createScedule')
+  }
+
+  btnTime.addEventListener('click', cloneTimeEl)
+
+  btnCourt.addEventListener('click', createScedule)
+
+  createScedule()
+})

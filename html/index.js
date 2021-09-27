@@ -159,7 +159,7 @@ onDOMContentLoaded(() => {
   }
 
   const createScedule = () => {
-    
+    d
     console.log('createScedule')
   }
 

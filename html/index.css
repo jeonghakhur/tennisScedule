@@ -1,4 +1,13 @@
 body {
   margin: 0;
 }
+
+.member-wrap {
+  margin: 1rem 0;
+  padding: 0 1rem;
+}
+
+.member-item {
+  margin: 0.5rem 0;
+}
 /*# sourceMappingURL=index.css.map */

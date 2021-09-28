@@ -1,5 +1,4 @@
 console.clear()
-const dataGame = JSON.parse(localStorage.getItem('dataGame'))
 const members = [
   {name: '한양연', time: ['19:00', '23:00'], count: []},
   {name: '허정학', time: ['20:00', '23:00'], count: []},
@@ -14,7 +13,7 @@ const members = [
 ]
 
 const setTime = (time) => {
-  return new Date(... time)
+  return new Date(...time)
 }
 
 members.forEach(member => {
@@ -28,14 +27,76 @@ members.forEach(member => {
 const memberItemTemplate = `
   <div class="member-item">
   <input type="text" size="10" placeholder="참석자 이름" name="memberName">
-  <input type="time" value="19:00" name="memberStartTime">
-  <input type="time" value="23:00" name="memberEndTime">
+  <label>시작시간</label>
+  <select name="memberStartHour">
+    <option value="1">01</option>
+    <option value="2">02</option>
+    <option value="3">03</option>
+    <option value="4">04</option>
+    <option value="5">06</option>
+    <option value="6">06</option>
+    <option value="7">07</option>
+    <option value="8">08</option>
+    <option value="9">09</option>
+    <option value="10">10</option>
+    <option value="11">11</option>
+    <option value="12">12</option>
+    <option value="13">13</option>
+    <option value="14">14</option>
+    <option value="15">15</option>
+    <option value="16">16</option>
+    <option value="17">17</option>
+    <option value="18">18</option>
+    <option value="19" selected>19</option>
+    <option value="20">20</option>
+    <option value="21">21</option>
+    <option value="22">22</option>
+    <option value="23">23</option>
+    <option value="00">24</option>
+  </select>
+  <select name="memberStartMinute">
+    <option value="0" selected>00</option>
+    <option value="30">30</option>
+  </select>
+  <label>종료시간</label>
+  <select name="memberEndHour">
+    <option value="1">01</option>
+    <option value="2">02</option>
+    <option value="3">03</option>
+    <option value="4">04</option>
+    <option value="5">06</option>
+    <option value="6">06</option>
+    <option value="7">07</option>
+    <option value="8">08</option>
+    <option value="9">09</option>
+    <option value="10">10</option>
+    <option value="11">11</option>
+    <option value="12">12</option>
+    <option value="13">13</option>
+    <option value="14">14</option>
+    <option value="15">15</option>
+    <option value="16">16</option>
+    <option value="17">17</option>
+    <option value="18">18</option>
+    <option value="19">19</option>
+    <option value="20">20</option>
+    <option value="21">21</option>
+    <option value="22">22</option>
+    <option value="23" selected>23</option>
+    <option value="00">24</option>
+  </select>
+  <select name="memberEndMinute">
+    <option value="0" selected>00</option>
+    <option value="30">30</option>
+  </select>
   <button type="button">Delete</button>
   </div>
 `
 class Game {
   constructor() {
-    this.memberCount = 0
+
+    this.dataGame = JSON.parse(localStorage.getItem('dataGame'))
+    console.log(this.dataGame)
   }
 
   init() {
@@ -44,12 +105,29 @@ class Game {
     this.endTime = []
     this.courtNumber = []
     this.moveTime = 0
+    this.dataGame.forEach(data => {
+      if (data.idx === 1) {
+        this.data = data
+      }
+    })
+
+    if (!this.data.members) {
+      this.memberId = 0
+      this.members = []
+    } else {
+      const val = this.data.members.map(member => {
+        return members.id
+      })
+      this.memberId = Math.max(...val)
+      this.members = this.data.members
+    }
+
 
     members.forEach(member => {
       member.count = []
     })
 
-    const today = document.querySelector('#startDate').value
+    this.today = document.querySelector('#startDate').value
     const startTimeEls = document.querySelectorAll('[name="startTime"]')
     const endTimeEls = document.querySelectorAll('[name="endTime"]')
     const courtNumberEls = document.querySelectorAll('[name="courtNumber"]')
@@ -65,6 +143,7 @@ class Game {
         if (val === value) {
           alert('동일한 코드가 입력되었습니다. 다시 확인 바랍니다.')
           courtNumber.focus()
+          return
         }
       })
 
@@ -73,7 +152,7 @@ class Game {
 
     startTimeEls.forEach(startTime => {
       const time = startTime.value.split(':')
-      const date = new Date(today)
+      const date = new Date(this.today)
       date.setHours(time[0])
       date.setMinutes(time[1])
       this.startTime.push(date)
@@ -81,7 +160,7 @@ class Game {
 
     endTimeEls.forEach(endTime => {
       const time = endTime.value.split(':')
-      const date = new Date(today)
+      const date = new Date(this.today)
       date.setHours(time[0])
       date.setMinutes(time[1])
       this.endTime.push(date)
@@ -90,6 +169,28 @@ class Game {
     this.moveTime = document.querySelector('[name="moveTime"]').value * 60 * 1000
 
     this.setCourt()
+    this.setEventLintener()
+  }
+
+  setEventLintener() {
+    const btnMemberAdd = document.querySelector('#btnMemberAdd')
+    const btnMemberSave = document.querySelector('#btnMemberSave')
+
+    btnMemberAdd.addEventListener('click', () => {
+      this.addMember()
+    })
+
+    btnMemberSave.addEventListener('click', () => {
+      if (this.members.length === 0) {
+        alert('멤머 정보가 존재하지 않습니다.')
+        return
+      } else {
+        this.data.members = this.members
+        console.log(this.members)
+        localStorage.setItem('dataGame', JSON.stringify(this.data))
+        // console.log(localStorage)
+      }
+    })
   }
 
   setCourt() {
@@ -142,8 +243,8 @@ class Game {
       const len = type === 'D' ? 4 : 2
   
       tempMembers = members.filter(member => {
-        const mst = member.time[0]
-        const met = member.time[1]
+        const mst = member.startTime
+        const met = member.endTime
         const count = member.count
         if (mst <= startTime && met >= endTime && count.indexOf(timeOrder) === -1) return member
       })
@@ -180,18 +281,86 @@ class Game {
   }
 
   addMember() {
-    this.memberCount += 1
+    this.memberId += 1
     const memberList = document.querySelector('.member-list')
     const tempEl = document.createElement('div')
     tempEl.innerHTML = memberItemTemplate
     const child = tempEl.children[0]
+    const name = child.querySelector('[name="memberName"]')
+    const startHour = child.querySelector('[name="memberStartHour"]')
+    const startMinute = child.querySelector('[name="memberStartMinute"]')
+    const endHour = child.querySelector('[name="memberEndHour"]')
+    const endMinute = child.querySelector('[name="memberEndMinute"]')
     const btnDelete = child.querySelector('button')
+    const startTime = new Date(this.today)
+    const endTime = new Date(this.today)
+
+    startTime.setHours(startHour.value)
+    startTime.setMinutes(startMinute.value)
+    endTime.setHours(endHour.value)
+    endTime.setMinutes(endMinute.value)
+
+    const setValue = (e, prop, value) => {
+      const id = Number(e.target.parentNode.id.split('-')[1])
+      this.members.forEach(member => {
+        if (member.id !== id) {
+          return
+        } else {
+          member[prop] = value 
+        }
+      })
+      console.log(this.members)
+    }
+
+    name.addEventListener('blur', e => {
+      setValue(e, 'name', name.value)
+    })
+
+    startHour.addEventListener('change', e => {
+      startTime.setHours(Number(e.target.value))
+      setValue(e, 'startTime', startTime)
+    })
+
+    startMinute.addEventListener('change', e => {
+      startTime.setMinutes(Number(e.target.value))
+      setValue(e, 'startTime', startTime)
+    })
+
+    endHour.addEventListener('change', e => {
+      endTime.setHours(Number(e.target.value))
+      setValue(e, 'endTime', endTime)
+    })
+
+    endMinute.addEventListener('change', e => {
+      endTime.setMinutes(Number(e.target.value))
+      setValue(e, 'endTime', endTime)
+    })
+
     btnDelete.addEventListener('click', e => {
       const parent = e.target.parentNode
+      const memberItems = memberList.childNodes
+      const index = [].findIndex.call(memberItems, item => {
+        return item === parent
+      })
+
+      this.members.splice(index, 1)
       parent.remove()
     })
-    child.classList.add(`member-item-count-${this.memberCount}`)
+
+    child.id = `memberId-${this.memberId}`
     memberList.appendChild(tempEl.children[0])
+    this.members.push({
+      id: this.memberId,
+      name: '',
+      startTime,
+      endTime,
+      count: []
+    })
+    console.log(this.members)
+  }
+
+  saveMember() {
+
   }
 }
 
@@ -204,44 +373,6 @@ const onDOMContentLoaded = callback => {
   } else {
     callback()
   }
-}
-
-const setGame = (type = 'D') => {
-  let tempMembers = []
-  games.forEach(game => {
-    const { startTime, endTime, timeOrder } = game
-    const len = type === 'D' ? 4 : 2
-
-    tempMembers = members.filter(member => {
-      const mst = member.time[0]
-      const met = member.time[1]
-      const count = member.count
-      if (mst <= startTime && met >= endTime && count.indexOf(timeOrder) === -1) return member
-    })
-
-    tempMembers.sort(() => Math.random() - Math.random())
-    tempMembers.sort((a, b) => {
-      const o1 = a.count.length
-      const o2 = b.count.length
-
-      if (o1 < o2) {
-        return -1
-      }
-      if (o1 > o2) {
-        return 1
-      }
-      return 0
-    })
-
-
-    if (tempMembers.length < 4) return
-    
-    for (let i = 0; i < len; i += 1) {
-      const member = tempMembers[i]
-      member.count.push(timeOrder)
-      game.player.push(member.name)
-    }
-  })
 }
 
 function setNumberLength(number) {
@@ -285,9 +416,9 @@ onDOMContentLoaded(() => {
   }
 
   btnTime.addEventListener('click', cloneTimeEl)
-  btnMemberAdd.addEventListener('click', () => {
-    game.addMember()
-  })
+  // btnMemberAdd.addEventListener('click', () => {
+  //   game.addMember()
+  // })
 
   btnCourt.addEventListener('click', createScedule)
 

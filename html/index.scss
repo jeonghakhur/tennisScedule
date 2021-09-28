@@ -1,3 +1,14 @@
 body {
   margin: 0;
 }
+
+.member {
+  &-wrap {
+    margin: 1rem 0;
+    padding: 0 1rem;
+  }
+
+  &-item {
+    margin: 0.5rem 0;
+  }
+}

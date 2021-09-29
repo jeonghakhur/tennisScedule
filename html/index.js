@@ -105,26 +105,14 @@ class Game {
     this.endTime = []
     this.courtNumber = []
     this.moveTime = 0
+    this.memberId = 0
+    this.members = []
+
     this.dataGame.forEach(data => {
       if (data.idx === 1) {
         this.data = data
       }
-    })
-
-    if (!this.data.members) {
-      this.memberId = 0
-      this.members = []
-    } else {
-      const val = this.data.members.map(member => {
-        return members.id
-      })
-      this.memberId = Math.max(...val)
-      this.members = this.data.members
-    }
-
-
-    members.forEach(member => {
-      member.count = []
+      this.addMember()
     })
 
     this.today = document.querySelector('#startDate').value
@@ -135,7 +123,7 @@ class Game {
     courtNumberEls.forEach(courtNumber => {
       const value = courtNumber.value
       if (!value) {
-        alert('코드 번호를 입력해 주세요')
+        alert('코트 번호를 입력해 주세요')
         return
       }
 
@@ -186,8 +174,9 @@ class Game {
         return
       } else {
         this.data.members = this.members
-        console.log(this.members)
-        localStorage.setItem('dataGame', JSON.stringify(this.data))
+        this.dataGame[0] = this.data
+        console.log(this.dataGame)
+        localStorage.setItem('dataGame', JSON.stringify(this.dataGame))
         // console.log(localStorage)
       }
     })

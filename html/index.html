@@ -40,12 +40,30 @@
     <button type="button" id="btnCourt">Create Court</button>
   </div>
   <div class="member-wrap" id="memberWrap">
+    <h2 class="member-title">참석회원</h2>
     <div class="member-list"></div>
     <button type="button" id="btnMemberAdd">Member Add</button>
     <button type="button" id="btnMemberSave">Member Save</button>
   </div>
+  <div class="game-container">
+    <table>
+      <thead>
+        <tr>
+          <th>번호</th>
+          <th>코트</th>
+          <th>시간</th>
+          <th>A페어</th>
+          <th>B페어</th>
+          <th>스코어</th>
+          <th>저장</th>
+        </tr>
+      </thead>
+      <tbody id="gameList"></tbody>
+    </table>
+  </div>
+
   <div id="gameWrap" class="gmae-wrap">
-    <div class="game-head">
+    <!-- <div class="game-head">
       <span class="courtName">코드명: A</span>
       <span class="time">시간: 19:00 ~ 19:30</span>
     </div>
@@ -59,7 +77,10 @@
         <input type="text" size="10" name="member" />
         <input type="text" size="10" name="member" />
       </div>
-    </div>
+    </div> -->
+  </div>
+  <div class="btn-wrap">
+    <button type="button">Save Game</button>
   </div>
   <script src="index.js"></script>
 </body>

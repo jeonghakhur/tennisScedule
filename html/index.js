@@ -16,6 +16,18 @@ const setTime = (time) => {
   return new Date(...time);
 };
 
+const numberLength = (number, length) => {
+  const val = String(number)
+  if (val.length < length) {
+    let str = ''
+    for (let i = 0; i < length - 1; i += 1) {
+      str += '0'
+    }
+    return str + String(number) 
+  }
+  return number
+}
+
 members.forEach((member) => {
   const st = member.time[0].split(':');
   const et = member.time[1].split(':');
@@ -91,11 +103,28 @@ const memberItemTemplate = `
   <button type="button">Delete</button>
   </div>
 `;
+
+const gameTemplate = `
+  <tr>
+    <td class="number"></td>
+    <td class="court"></td>
+    <td class="time"></td>
+    <td class="pair-a"></td>
+    <td class="pair-b"></td>
+    <td class="score">
+      <input type="text" size="2">
+      <input type="text" size="2">
+    </td>
+    <td><button type="button">저장</button></td>
+  </tr>
+`
 class Game {
   constructor() {
     this.today = document.querySelector('#startDate').value;
     this.dataGame = JSON.parse(localStorage.getItem('dataGame'));
     this.memberId = 0;
+    this.gameWrap = document.querySelector('#gameWrap')
+    this.gameList = document.querySelector('#gameList')
   }
 
   init() {
@@ -134,64 +163,65 @@ class Game {
   }
 
   setCourt() {
-    this.startTime = [];
-    this.endTime = [];
-    this.courtNumber = [];
-    this.moveTime = 0;
-    this.games = [];
-    this.gameNumbers = [];
+    this.games = []
+    this.data.members.forEach(member => {
+      member.count = []
+    })
+    const startTime = [];
+    const endTime = [];
+    const courtNumber = [];
+    let moveTime = 0;
+    const gameNumbers = [];
 
     const startTimeEls = document.querySelectorAll('[name="startTime"]');
     const endTimeEls = document.querySelectorAll('[name="endTime"]');
     const courtNumberEls = document.querySelectorAll('[name="courtNumber"]');
 
-    courtNumberEls.forEach((courtNumber) => {
-      const value = courtNumber.value;
+    courtNumberEls.forEach((el) => {
+      const value = el.value;
       if (!value) {
         alert('코트 번호를 입력해 주세요');
         return;
       }
 
-      this.courtNumber.forEach((val) => {
+      courtNumber.forEach((val) => {
         if (val === value) {
           alert('동일한 코드가 입력되었습니다. 다시 확인 바랍니다.');
-          courtNumber.focus();
+          el.focus();
           return;
         }
       });
 
-      this.courtNumber.push(value);
+      courtNumber.push(value);
     });
 
-    startTimeEls.forEach((startTime) => {
-      const time = startTime.value.split(':');
+    startTimeEls.forEach((el) => {
+      const time = el.value.split(':');
       const date = new Date(this.today);
       date.setHours(time[0]);
       date.setMinutes(time[1]);
-      this.startTime.push(date);
+      startTime.push(date);
     });
 
-    endTimeEls.forEach((endTime) => {
-      const time = endTime.value.split(':');
+    endTimeEls.forEach((el) => {
+      const time = el.value.split(':');
       const date = new Date(this.today);
       date.setHours(time[0]);
       date.setMinutes(time[1]);
-      this.endTime.push(date);
+      endTime.push(date);
     });
 
-    this.moveTime =
+    moveTime =
       document.querySelector('[name="moveTime"]').value * 60 * 1000;
 
-    const { startTime, endTime, moveTime, courtNumber } = this;
-    
     const firstTime = Math.min(...startTime);
     
 
     for (let i = 0; i < startTime.length; i += 1) {
-      this.gameNumbers.push((endTime[i] - startTime[i]) / moveTime);
+      gameNumbers.push((endTime[i] - startTime[i]) / moveTime);
     }
 
-    this.gameNumbers.forEach((number, idx) => {
+    gameNumbers.forEach((number, idx) => {
       for (let i = 0, len = number; i < len; i += 1) {
         const st = startTime[idx].getTime() + moveTime * i;
         const et = st + moveTime;
@@ -217,12 +247,78 @@ class Game {
       return 0;
     });
 
+    this.gameList.innerHTML = ''
     this.games.forEach((game, idx) => {
       Object.assign(game, { id: idx });
+      this.setGameElements(game, idx)
     });
 
-    console.log(this.games)
-    // this.createGames();
+    console.log(this.data.members)
+  }
+
+  setGameElements(game, idx) {
+    const {court, timeOrder} = game
+    const startTime = new Date(game.startTime)
+    const startHour = numberLength(startTime.getHours(), 2)
+    const startMinute = numberLength(startTime.getMinutes(), 2)
+    const endTime = new Date(game.endTime)
+    const endHour = numberLength(endTime.getHours(), 2)
+    const endMinute = numberLength(endTime.getMinutes(), 2)
+    const tempEl = document.createElement('template')
+    tempEl.innerHTML = gameTemplate
+    const row = tempEl.content.firstElementChild
+    const cell = row.querySelectorAll('td')
+    
+    cell[0].textContent = idx + 1
+    cell[1].textContent = court
+    cell[2].innerHTML = `${startHour}:${startMinute}<br>${endHour}:${endMinute}`
+
+    // 참석 가능한 모든 멤버
+    const tempMembers = this.data.members.filter(member => {
+      const mst = member.startTime
+      const met = member.endTime
+      if (mst <= startTime.getTime() && met >= endTime.getTime()) return member
+    })
+    // 현재 타임에 참석한 멤버 제외
+    tempMembers.sort(() => Math.random() - Math.random())
+    tempMembers.sort((a, b) => {
+      if (a.count.length < b.count.length) {
+        return -1
+      }
+      if (a.count.length > b.count.length) {
+        return 1
+      }
+      return 0
+    })
+
+    for (let i = 0, len = 4; i < len; i += 1) {
+      const useMembers = tempMembers.filter(member => {
+        if (member.count.indexOf(timeOrder) === -1) return member
+      })
+
+      const select = document.createElement('select')
+      useMembers.forEach((member, idx) => {
+        const option = document.createElement('option')
+        option.value = member.name
+        option.textContent = member.name
+        select.append(option)
+        if (idx === 0) {
+          this.data.members.find(m => {
+            if (m.name === member.name) {
+              m.count.push(game.timeOrder)
+            }
+          })
+        }
+      })
+
+      if (i < 2) {
+        cell[3].append(select)
+      } else {
+        cell[4].append(select)
+      }
+    }
+
+    this.gameList.appendChild(tempEl.content.firstElementChild)
   }
 
   createGames(type = 'D') {
@@ -268,7 +364,7 @@ class Game {
 
     this.games.forEach((game) => {});
 
-    console.log(this.games);
+    // console.log(this.games);
   }
 
   addMember(member) {
@@ -298,8 +394,7 @@ class Game {
       const index = [].findIndex.call(memberItems, (item) => {
         return item === parent;
       });
-
-      this.members.splice(index, 1);
+      this.data.members.splice(index, 1);
       parent.remove();
     });
 
@@ -310,7 +405,7 @@ class Game {
 
   saveMember() {
     const memberItems = document.querySelectorAll('.member-item');
-    const members = [];
+    this.members = [];
 
     memberItems.forEach((member) => {
       const startHour = member.querySelector('[name="memberStartHour"]').value;
@@ -326,16 +421,18 @@ class Game {
       endTime.setHours(endHour);
       endTime.setMinutes(endMinute);
 
-      members.push({
+      this.members.push({
         name: member.querySelector('[name="memberName"]').value,
         startTime: startTime.getTime(),
         endTime: endTime.getTime(),
+        count: [],
+        gender: ''
       });
     });
 
     this.dataGame.forEach((data) => {
       if (data.idx === 1) {
-        data.members = members;
+        data.members = this.members;
       }
     });
 

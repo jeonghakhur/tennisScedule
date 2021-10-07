@@ -1,5 +1,6 @@
 body {
   margin: 0;
+  padding: 1rem;
 }
 
 .member-wrap {
@@ -9,5 +10,51 @@ body {
 
 .member-item {
   margin: 0.5rem 0;
+}
+
+.game-container table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.game-container th {
+  padding: 0.5rem 0.25rem;
+  background-color: #ced4da;
+}
+
+.game-container td {
+  text-align: center;
+  border-bottom: 1px solid #495057;
+  padding: 0.25rem 0.125rem;
+}
+
+.game-container .time {
+  font-size: 0.75rem;
+}
+
+.game-container .pair-a {
+  position: relative;
+  padding-right: 0.5rem;
+}
+
+.game-container .pair-a::before {
+  content: 'VS';
+  position: absolute;
+  width: 16px;
+  color: #c92a2a;
+  text-align: center;
+  font-size: 0.75rem;
+  right: -1rem;
+  top: 50%;
+  -webkit-transform: translate(-50%, -50%);
+          transform: translate(-50%, -50%);
+}
+
+.game-container .pair-b {
+  padding-left: 0.5rem;
+}
+
+.game-container select {
+  margin: 0 0.125rem;
 }
 /*# sourceMappingURL=index.css.map */

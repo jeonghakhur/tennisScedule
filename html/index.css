@@ -3,9 +3,26 @@ body {
   padding: 1rem;
 }
 
-.member-wrap {
-  margin: 1rem 0;
-  padding: 0 1rem;
+/* Chrome, Safari, Edge, Opera */
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.member-wrap table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.member-wrap td {
+  padding: 0.25rem 0.125rem;
+  text-align: center;
+  border-bottom: 1px solid #495057;
+}
+
+.member-wrap td:nth-child(4) select {
+  margin: 0 0.125rem;
 }
 
 .member-item {

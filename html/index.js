@@ -1,16 +1,4 @@
 console.clear();
-const members = [
-  { name: '한양연', time: ['19:00', '23:00'], count: [] },
-  { name: '허정학', time: ['20:00', '23:00'], count: [] },
-  { name: '장영원', time: ['19:00', '23:00'], count: [] },
-  { name: '고건한', time: ['19:00', '23:00'], count: [] },
-  { name: '최다현', time: ['20:00', '23:00'], count: [] },
-  { name: '고수현', time: ['19:00', '23:00'], count: [] },
-  { name: '한웅비', time: ['19:00', '22:00'], count: [] },
-  { name: '전원', time: ['19:00', '22:00'], count: [] },
-  { name: '장지훈', time: ['19:00', '23:00'], count: [] },
-  { name: '이현우', time: ['20:00', '23:00'], count: [] },
-];
 
 const setTime = (time) => {
   return new Date(...time);
@@ -28,80 +16,16 @@ const numberLength = (number, length) => {
   return number
 }
 
-members.forEach((member) => {
-  const st = member.time[0].split(':');
-  const et = member.time[1].split(':');
-  member.time[0] = setTime([2021, 8, 27, st[0], st[1]]);
-  member.time[1] = setTime([2021, 8, 27, et[0], et[1]]);
-});
-
 const memberItemTemplate = `
-  <div class="member-item">
-  <input type="text" size="10" placeholder="참석자 이름" name="memberName">
-  <label>시작시간</label>
-  <select name="memberStartHour">
-    <option value="1">01</option>
-    <option value="2">02</option>
-    <option value="3">03</option>
-    <option value="4">04</option>
-    <option value="5">06</option>
-    <option value="6">06</option>
-    <option value="7">07</option>
-    <option value="8">08</option>
-    <option value="9">09</option>
-    <option value="10">10</option>
-    <option value="11">11</option>
-    <option value="12">12</option>
-    <option value="13">13</option>
-    <option value="14">14</option>
-    <option value="15">15</option>
-    <option value="16">16</option>
-    <option value="17">17</option>
-    <option value="18">18</option>
-    <option value="19" selected>19</option>
-    <option value="20">20</option>
-    <option value="21">21</option>
-    <option value="22">22</option>
-    <option value="23">23</option>
-    <option value="00">24</option>
-  </select>
-  <select name="memberStartMinute">
-    <option value="0" selected>00</option>
-    <option value="30">30</option>
-  </select>
-  <label>종료시간</label>
-  <select name="memberEndHour">
-    <option value="1">01</option>
-    <option value="2">02</option>
-    <option value="3">03</option>
-    <option value="4">04</option>
-    <option value="5">06</option>
-    <option value="6">06</option>
-    <option value="7">07</option>
-    <option value="8">08</option>
-    <option value="9">09</option>
-    <option value="10">10</option>
-    <option value="11">11</option>
-    <option value="12">12</option>
-    <option value="13">13</option>
-    <option value="14">14</option>
-    <option value="15">15</option>
-    <option value="16">16</option>
-    <option value="17">17</option>
-    <option value="18">18</option>
-    <option value="19">19</option>
-    <option value="20">20</option>
-    <option value="21">21</option>
-    <option value="22">22</option>
-    <option value="23" selected>23</option>
-    <option value="00">24</option>
-  </select>
-  <select name="memberEndMinute">
-    <option value="0" selected>00</option>
-    <option value="30">30</option>
-  </select>
-  <button type="button">Delete</button>
-  </div>
+  <tr>
+    <td></td>
+    <td><input type="text" size="10" placeholder="참석자 이름" name="memberName"></td>
+    <td><label><input type="radio" value="M" />남성</label><label><input type="radio" value="F" />여성</label></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td><button type="button">삭제</button></td>
+  </tr>
 `;
 
 const gameTemplate = `
@@ -120,32 +44,50 @@ const gameTemplate = `
 `
 class Game {
   constructor() {
-    this.today = document.querySelector('#startDate').value;
     this.dataGame = JSON.parse(localStorage.getItem('dataGame'));
     this.memberId = 0;
-    this.gameWrap = document.querySelector('#gameWrap')
     this.gameList = document.querySelector('#gameList')
+    this.memberList = document.querySelector('#memberList')
+    this.courtStartTime = []
+    this.courtEndTime = []
   }
 
   init() {
+    this.today = document.querySelector('#startDate').value;
     this.dataGame.forEach((data) => {
       if (data.idx === 1) {
         this.data = data;
       }
     });
 
-    this.data.members.forEach((member) => {
-      this.addMember(member);
-    });
+    if (this.data.members) {
+      this.data.members.forEach((member) => {
+        this.addMember(member);
+      });
+    }
 
+    this.courtStartTime = this.setCourtTime(document.querySelectorAll('[name="courtStartHour"]'))
+    this.courtEndTime = this.setCourtTime(document.querySelectorAll('[name="courtEndHour"]'))
 
     this.setEventLintener();
+  }
+
+  setCourtTime(els) {
+    const array = []
+    els.forEach(el => {
+      const date = new Date(this.today)
+      date.setHours(el.value)
+      array.push(date)
+    })
+    return array
   }
 
   setEventLintener() {
     const btnMemberAdd = document.querySelector('#btnMemberAdd');
     const btnMemberSave = document.querySelector('#btnMemberSave');
     const btnCourt = document.querySelector('#btnCourt')
+    const courtStartHourEls = document.querySelectorAll('[name="courtStartHour"]')
+    const courtEndHourEls = document.querySelectorAll('[name="courtEndHour"]')
 
     btnMemberAdd.addEventListener('click', () => {
       this.addMember();
@@ -159,14 +101,44 @@ class Game {
       this.setCourt()
     })
 
+    courtStartHourEls.forEach(el => {
+      el.addEventListener('change', this.handleCourtStartTime.bind(this))
+    })
+
+    courtEndHourEls.forEach(el => {
+      el.addEventListener('change', this.handleCourtEndTime.bind(this))
+    })
+
     this.setCourt()
+  }
+
+  handleCourtStartTime(e) {
+    const courtStartHourEls = document.querySelectorAll('[name="courtStartHour"]')
+    courtStartHourEls.forEach((el, idx) => {
+      if (el === e.target) {
+        this.courtStartTime[idx].setHours(e.target.value)
+      }
+    })
+  }
+
+  handleCourtEndTime(e) {
+    const courtEndHourEls = document.querySelectorAll('[name="courtEndHour"]')
+    courtEndHourEls.forEach((el, idx) => {
+      if (el === e.target) {
+        this.courtEndTime[idx].setHours(e.target.value)
+      }
+    })
+    console.log(this.courtEndTime)
   }
 
   setCourt() {
     this.games = []
+    if (!this.data.mebers) return
+
     this.data.members.forEach(member => {
       member.count = []
     })
+
     const startTime = [];
     const endTime = [];
     const courtNumber = [];
@@ -216,7 +188,6 @@ class Game {
 
     const firstTime = Math.min(...startTime);
     
-
     for (let i = 0; i < startTime.length; i += 1) {
       gameNumbers.push((endTime[i] - startTime[i]) / moveTime);
     }
@@ -369,27 +340,58 @@ class Game {
 
   addMember(member) {
     this.memberId += 1;
-    const memberList = document.querySelector('.member-list');
-    const tempEl = document.createElement('div');
+    const tempEl = document.createElement('template');
     tempEl.innerHTML = memberItemTemplate;
-    const child = tempEl.children[0];
-    const name = child.querySelector('[name="memberName"]');
-    const startHour = child.querySelector('[name="memberStartHour"]');
-    const startMinute = child.querySelector('[name="memberStartMinute"]');
-    const endHour = child.querySelector('[name="memberEndHour"]');
-    const endMinute = child.querySelector('[name="memberEndMinute"]');
-    const btnDelete = child.querySelector('button');
+    const row = tempEl.content.firstElementChild;
+    const cells = row.querySelectorAll('td')
+    const name = row.querySelector('[name="memberName"]')
+    const radios = row.querySelectorAll('input[type="radio"]')
+    const btnDelete = row.querySelector('button')
+    const firstTime = Math.min(...this.courtStartTime)
+    const lastTime = Math.max(...this.courtEndTime)
+    cells[0].textContent = this.memberId
+
+    radios.forEach((radio, idx) => {
+      radio.setAttribute('name', `gender-${this.memberId}`)
+      if (idx === 0) radio.checked = true
+    })
+
+    const addOption = (select, len, val) => {
+      for (let i = 0; i < len; i += val) {
+        const option = document.createElement('option')
+        option.value = i
+        option.textContent = String(i).length < 2 ? '0' + i : i
+        select.appendChild(option)
+      }
+    }
+
+    for (let i = 0, len = 4; i < len; i += 1) {
+      const select = document.createElement('select')
+      if (i % 2) {
+        addOption(select, 60, 30)
+      } else {
+        addOption(select, 24, 1)
+      }
+      if (i === 2) {
+        cells[3].append('~')
+      }
+      cells[3].appendChild(select)
+    }
+
+    const timeEls = row.querySelectorAll('select')
+    timeEls[0].value = new Date(firstTime).getHours()
+    timeEls[2].value = new Date(lastTime).getHours()
 
     if (member) {
       name.value = member.name;
-      startHour.value = new Date(member.startTime).getHours();
-      startMinute.value = new Date(member.startTime).getMinutes();
-      endHour.value = new Date(member.endTime).getHours();
-      endMinute.value = new Date(member.endTime).getMinutes();
-    }
+      timeEls[0].value = new Date(member.startTime).getHours();
+      timeEls[1].value = new Date(member.startTime).getMinutes();
+      timeEls[2].value = new Date(member.endTime).getHours();
+      timeEls[3].value = new Date(member.endTime).getMinutes();
+    } 
 
     btnDelete.addEventListener('click', (e) => {
-      const parent = e.target.parentNode;
+      const parent = e.target.closest('tr');
       const memberItems = memberList.childNodes;
       const index = [].findIndex.call(memberItems, (item) => {
         return item === parent;
@@ -398,31 +400,29 @@ class Game {
       parent.remove();
     });
 
-    child.id = `memberId-${this.memberId}`;
-    memberList.appendChild(tempEl.children[0]);
+    this.memberList.appendChild(row);
     name.focus();
   }
 
   saveMember() {
-    const memberItems = document.querySelectorAll('.member-item');
     this.members = [];
-
-    memberItems.forEach((member) => {
-      const startHour = member.querySelector('[name="memberStartHour"]').value;
-      const startMinute = member.querySelector(
-        '[name="memberStartMinute"]'
-      ).value;
-      const endHour = member.querySelector('[name="memberEndHour"]').value;
-      const endMinute = member.querySelector('[name="memberEndMinute"]').value;
-      const startTime = new Date(this.today);
-      const endTime = new Date(this.today);
-      startTime.setHours(startHour);
-      startTime.setMinutes(startMinute);
-      endTime.setHours(endHour);
-      endTime.setMinutes(endMinute);
+    const rows = this.memberList.querySelectorAll('tr')
+    rows.forEach(row => {
+      const nameEl = row.querySelector('[name="memberName"]')
+      const timeEls = row.querySelectorAll('select')
+      const startHour = timeEls[0].value
+      const startMinute = timeEls[1].value
+      const endHour = timeEls[2].value
+      const endMinute = timeEls[3].value
+      const startTime = new Date(this.today)
+      const endTime = new Date(this.today)
+      startTime.setHours(startHour)
+      startTime.setMinutes(startMinute)
+      endTime.setHours(endHour)
+      endTime.setMinutes(endMinute)
 
       this.members.push({
-        name: member.querySelector('[name="memberName"]').value,
+        name: nameEl.value,
         startTime: startTime.getTime(),
         endTime: endTime.getTime(),
         count: [],
@@ -430,13 +430,14 @@ class Game {
       });
     });
 
+
     this.dataGame.forEach((data) => {
       if (data.idx === 1) {
         data.members = this.members;
       }
     });
 
-    localStorage.setItem('dataGame', JSON.stringify(this.dataGame));
+    // localStorage.setItem('dataGame', JSON.stringify(this.dataGame));
   }
 }
 

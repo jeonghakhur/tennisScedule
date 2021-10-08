@@ -26,13 +26,26 @@
 <body>
   <div>
     <input type="date" name="startDate" value="2021-09-16" id="startDate">
-    <input type="number" name="moveTime" value="30" style="width: 50px; text-align: center">
+    <input type="number" name="moveTime" value="30" size="2">
   </div>
   <div class="court-time-wrap">
+    <table>
+      <thead>
+        <th>코트명</th>
+        <th>시작시간</th>
+        <th>종료시간</th>
+      </thead>
+    </table>
     <div class="court-time-list">
       <input type="text" name="courtNumber" size="2" value="1">
-      <input type="time" name="startTime" value="19:00"> ~
-      <input type="time" name="endTime" value="23:00">
+      <input type="number" name="courtStartHour" value="19" style="width: 20px"> ~
+      <input type="number" name="courtEndHour" value="23" style="width: 20px">
+    </div>
+    <div class="court-time-list">
+      <input type="text" name="courtNumber" size="2" value="2">
+      <input type="number" name="courtStartHour" value="19" style="width: 20px"> ~
+      <input type="number" name="courtEndHour" value="23" style="width: 20px">
+      <button type="button" name="courtDelete">Delete</button>
     </div>
   </div>
   <div>
@@ -41,6 +54,20 @@
   </div>
   <div class="member-wrap" id="memberWrap">
     <h2 class="member-title">참석회원</h2>
+    <table>
+      <thead>
+        <tr>
+          <th style="width: 30px">번호</th>
+          <th>참석자</th>
+          <th>성별</th>
+          <th>참석시간</th>
+          <th>게임수</th>
+          <th>참석게임</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody id="memberList"></tbody>
+    </table>
     <div class="member-list"></div>
     <button type="button" id="btnMemberAdd">Member Add</button>
     <button type="button" id="btnMemberSave">Member Save</button>
@@ -62,23 +89,6 @@
     </table>
   </div>
 
-  <div id="gameWrap" class="gmae-wrap">
-    <!-- <div class="game-head">
-      <span class="courtName">코드명: A</span>
-      <span class="time">시간: 19:00 ~ 19:30</span>
-    </div>
-    <div class="game-member">
-      <span class="label">1게임</span>
-      <div>
-        <input type="text" size="10" name="member" />
-        <input type="text" size="10" name="member" />
-      </div>
-      <div>
-        <input type="text" size="10" name="member" />
-        <input type="text" size="10" name="member" />
-      </div>
-    </div> -->
-  </div>
   <div class="btn-wrap">
     <button type="button">Save Game</button>
   </div>
